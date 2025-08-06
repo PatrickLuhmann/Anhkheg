@@ -1,0 +1,77 @@
+{
+  "$id": "1",
+  "$values": [
+    {
+      "$id": "2",
+      "Id": 1,
+      "Name": "2008 Honda Fit",
+      "FuelPurchases": {
+        "$id": "3",
+        "$values": [
+          {
+            "$id": "4",
+            "Id": 1,
+            "Date": "2009-01-01T00:00:00",
+            "Gallons": 8.76,
+            "TripMilage": 321.09,
+            "Cost": 1.23,
+            "Odometer": 9876,
+            "VehicleId": 1,
+            "Vehicle": {
+              "$ref": "2"
+            }
+          },
+          {
+            "$id": "5",
+            "Id": 2,
+            "Date": "2010-01-01T00:00:00",
+            "Gallons": 7.62,
+            "TripMilage": 299.99,
+            "Cost": 4.56,
+            "Odometer": 13690,
+            "VehicleId": 1,
+            "Vehicle": {
+              "$ref": "2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "$id": "6",
+      "Id": 2,
+      "Name": "1998 Pontiac Firebird Formula",
+      "FuelPurchases": {
+        "$id": "7",
+        "$values": [
+          {
+            "$id": "8",
+            "Id": 3,
+            "Date": "1999-01-01T00:00:00",
+            "Gallons": 13.96,
+            "TripMilage": 296.6,
+            "Cost": 28.64,
+            "Odometer": 300,
+            "VehicleId": 2,
+            "Vehicle": {
+              "$ref": "6"
+            }
+          },
+          {
+            "$id": "9",
+            "Id": 4,
+            "Date": "1999-01-23T00:00:00",
+            "Gallons": 12.98,
+            "TripMilage": 301.6,
+            "Cost": 33.33,
+            "Odometer": 602,
+            "VehicleId": 2,
+            "Vehicle": {
+              "$ref": "6"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
