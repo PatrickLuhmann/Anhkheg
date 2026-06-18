@@ -9,8 +9,12 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 
 
+#if WINDOWS
 // We are displaying a lot of data so make sure the console window is wide.
 Console.SetWindowSize(200, 50);
+#else
+Console.WriteLine("This is not Windows so we are stuck with your console window size.");
+#endif
 
 Console.WriteLine("Welcome to Anhkheg!");
 
