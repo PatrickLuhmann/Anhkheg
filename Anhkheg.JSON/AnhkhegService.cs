@@ -150,6 +150,7 @@ public class AnhkhegService
 
 		if (File.Exists(connectionString))
 		{
+			Console.WriteLine($"Attempting to open file {connectionString}.");
 			// Grab the vehicle purchase data once at the beginning.
 			// We will not be reading the data every time the user
 			// does a query.
@@ -181,6 +182,9 @@ public class AnhkhegService
 			}
 		}
 		else
+		{
+			Console.WriteLine($"Connection string {connectionString} is not valid.");
 			vehicles = new List<Vehicle>();
+		}
 	}
 }

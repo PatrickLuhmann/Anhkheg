@@ -17,6 +17,8 @@ Console.WriteLine("This is not Windows so we are stuck with your console window 
 #endif
 
 Console.WriteLine("Welcome to Anhkheg!");
+Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
+Console.WriteLine($"Current directory: {System.IO.Directory.GetCurrentDirectory()}");
 
 AnhkhegData carData = new();
 
