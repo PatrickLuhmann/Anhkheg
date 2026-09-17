@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Anhkheg.Domain/Anhkheg.Domain.csproj" />
+  <Project Path="Anhkheg.JSON.UnitTests/Anhkheg.JSON.UnitTests.csproj" />
+  <Project Path="Anhkheg.JSON/Anhkheg.JSON.csproj" />
+  <Project Path="Anhkheg/Anhkheg.csproj" />
+</Solution>
