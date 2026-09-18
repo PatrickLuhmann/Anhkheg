@@ -1,9 +1,6 @@
 ﻿using Anhkheg.Domain.Models;
-using System;
 using System.Reflection;
-using System.Xml.Linq;
-using Xunit.Abstractions;
-using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Anhkheg.JSON.UnitTests;
 
@@ -19,43 +16,36 @@ public class AnhkhegServiceTests
 		//   of the test class.
 		// - Have the [CustomBeforeAfter] attribute on each test.
 		// - Pass the name of the unique file to the service constructor.
-		public override void Before(MethodInfo methodUnderTest)
+		public override void Before(MethodInfo methodUnderTest, IXunitTest test)
 		{
 			// TODO: Do I need this?
-			base.Before(methodUnderTest);
+			base.Before(methodUnderTest, test);
 
 			File.Copy("test_data.json", methodUnderTest.Name + ".json");
 		}
 
-		public override void After(MethodInfo methodUnderTest)
+		public override void After(MethodInfo methodUnderTest, IXunitTest test)
 		{
 			// TODO: Do I need this?
-			base.After(methodUnderTest);
+			base.After(methodUnderTest, test);
 
 			File.Delete(methodUnderTest.Name + ".json");
 		}
 	}
 
-	public class TestBase
+	public class TestBase(ITestOutputHelper tout)
 	{
 		public string? Filename { get; set; }
-		public readonly ITestOutputHelper OutputHelper;
-
-		public TestBase(ITestOutputHelper tout)
-		{
-			OutputHelper = tout;
-		}
+		public readonly ITestOutputHelper OutputHelper = tout;
 	}
 
-	public class CreateVehicle : TestBase
+	public class CreateVehicle(ITestOutputHelper tout) : TestBase(tout)
 	{
-		public CreateVehicle(ITestOutputHelper tout) : base(tout) { }
-
 		[Fact]
 		[CustomBeforeAfter]
 		public void CreateVehicle_Normal()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -80,7 +70,7 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void CreateVehicle_DuplicateName()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			string name = "1998 Pontiac Firebird Formula";
@@ -92,15 +82,13 @@ public class AnhkhegServiceTests
 		}
 	}
 
-	public class GetVehicles : TestBase
+	public class GetVehicles(ITestOutputHelper tout) : TestBase(tout)
 	{
-		public GetVehicles(ITestOutputHelper tout) : base(tout) { }
-
 		[Fact]
 		[CustomBeforeAfter]
 		public void GetVehicles_Normal()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -186,15 +174,13 @@ public class AnhkhegServiceTests
 		}
 	}
 
-	public class GetVehicleByName : TestBase
+	public class GetVehicleByName(ITestOutputHelper tout) : TestBase(tout)
 	{
-		public GetVehicleByName(ITestOutputHelper tout) : base(tout) { }
-
 		[Fact]
 		[CustomBeforeAfter]
 		public void GetVehicleByName_Present()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -245,7 +231,7 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void GetVehicleByName_NotPresent()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -258,15 +244,13 @@ public class AnhkhegServiceTests
 		}
 	}
 
-	public class DeleteVehicle : TestBase
+	public class DeleteVehicle(ITestOutputHelper tout) : TestBase(tout)
 	{
-		public DeleteVehicle(ITestOutputHelper tout) : base(tout) { }
-
 		[Fact]
 		[CustomBeforeAfter]
 		public void DeleteVehicle_NotTheLastOne()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -321,7 +305,7 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void DeleteVehicle_TheLastOne()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -339,26 +323,23 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void DeleteVehicle_NotPresent()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
 
 			// ACT + ASSERT
-			Exception ex = Assert.Throws<VehicleNotFoundException>(
-				() => srv.DeleteVehicle("1963 Volkswagen Beetle"));
+			Exception ex = Assert.Throws<VehicleNotFoundException>(() => srv.DeleteVehicle("1963 Volkswagen Beetle"));
 		}
 	}
 
-	public class CreatePurchase : TestBase
+	public class CreatePurchase(ITestOutputHelper tout) : TestBase(tout)
 	{
-		public CreatePurchase(ITestOutputHelper tout) : base(tout) { }
-
 		[Fact]
 		[CustomBeforeAfter]
 		public void CreatePurchase_InTheMiddle()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -437,22 +418,22 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void CreatePurchase_VehicleNotFound()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
 			VehicleData badVehicle = new("1980 Chevrolet Citation");
 
 			// ACT + ASSERT
-			Exception ex = Assert.Throws<VehicleNotFoundException>(
-				() => srv.CreatePurchase(badVehicle, new DateTime(2020, 1, 1), 12.34m, 234.5m, 45.67m, 13690));
+			Exception ex = Assert.Throws<VehicleNotFoundException>(() =>
+				srv.CreatePurchase(badVehicle, new DateTime(2020, 1, 1), 12.34m, 234.5m, 45.67m, 13690));
 		}
 
 		[Fact]
 		[CustomBeforeAfter]
 		public void CreatePurchase_DuplicateOdometerValue()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -460,17 +441,17 @@ public class AnhkhegServiceTests
 			VehicleData vehicle = vehicles.Find(v => v.Name == "2008 Honda Fit")!;
 
 			// ACT + ASSERT
-			Exception ex = Assert.Throws<DuplicateOdometerValueException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2010, 1, 2), 12.34m, 234.5m, 45.67m, 13690));
-			ex = Assert.Throws<DuplicateOdometerValueException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 9876));
+			Exception ex = Assert.Throws<DuplicateOdometerValueException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2010, 1, 2), 12.34m, 234.5m, 45.67m, 13690));
+			ex = Assert.Throws<DuplicateOdometerValueException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 9876));
 		}
 
 		[Fact]
 		[CustomBeforeAfter]
 		public void CreatePurchase_InconsistentDate()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -480,24 +461,24 @@ public class AnhkhegServiceTests
 			// ACT + ASSERT
 			Exception ex;
 			// Date in between first and second but odometer before first.
-			ex = Assert.Throws<InconsistentDateException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 9875));
+			ex = Assert.Throws<InconsistentDateException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 9875));
 			// Date after second but odometer before second.
-			ex = Assert.Throws<InconsistentDateException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2010, 1, 2), 12.34m, 234.5m, 45.67m, 13689));
+			ex = Assert.Throws<InconsistentDateException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2010, 1, 2), 12.34m, 234.5m, 45.67m, 13689));
 			// Date before first but odometer after.
-			ex = Assert.Throws<InconsistentDateException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2008, 1, 1), 12.34m, 234.5m, 45.67m, 9877));
+			ex = Assert.Throws<InconsistentDateException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2008, 1, 1), 12.34m, 234.5m, 45.67m, 9877));
 			// Date in between first and second but odometer after second.
-			ex = Assert.Throws<InconsistentDateException>(
-				() => srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 13691));
+			ex = Assert.Throws<InconsistentDateException>(() =>
+				srv.CreatePurchase(vehicle, new DateTime(2009, 1, 2), 12.34m, 234.5m, 45.67m, 13691));
 		}
 
 		[Fact]
 		[CustomBeforeAfter]
 		public void CreatePurchase_DuplicateDateAfter()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
@@ -576,7 +557,7 @@ public class AnhkhegServiceTests
 		[CustomBeforeAfter]
 		public void CreatePurchase_DuplicateDateBefore()
 		{
-			Filename = System.Reflection.MethodBase.GetCurrentMethod()!.Name + ".json";
+			Filename = MethodBase.GetCurrentMethod()!.Name + ".json";
 
 			// ASSEMBLE
 			AnhkhegService srv = new(Filename);
