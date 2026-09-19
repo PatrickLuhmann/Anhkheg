@@ -1,0 +1,24 @@
+root = true
+
+[*]
+indent_size = 4
+indent_style = tab
+
+; My namespace naming doesn't always match the directory name
+resharper_check_namespace_highlighting=none
+
+; Default of 80 is too short for modern editors
+max_line_length = 120
+
+; These three either don't work or aligning broken long line overrides
+keep_user_linebreaks = true
+keep_existing_arrangement = true
+keep_existing_linebreaks = true
+
+place_attribute_on_same_line = never
+use_indent_from_previous_element = true
+
+; Tabs get you to the block level, then spaces from there so alignment always works
+alignment_tab_fill_style = use_spaces
+
+align_multiline_binary_expressions_chain = false
