@@ -3,7 +3,6 @@
     "Anhkheg (Development)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "workingDirectory": "$(ProjectDir)",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       }

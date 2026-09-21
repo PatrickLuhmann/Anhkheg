@@ -72,11 +72,10 @@ internal class AnhkhegData
 
 	public AnhkhegData()
 	{
-		// Get our filename from the configuration and load our data.
-		var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-		var connStr = config.GetConnectionString("json") ??
-			throw new Exception("JSON filename is not present in configuration data.");
-		Filename = connStr;
+		// TODO: When we are ready to support running in a production environment,
+		//       the path to the data store will not be static.
+		Filename = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+			"/NerdyNeutrino/.development/anhkheg.json";
 
 		_service = new AnhkhegService(Filename);
 		_vehicles = _service.GetVehicles();
