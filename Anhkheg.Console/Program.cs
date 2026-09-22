@@ -5,16 +5,18 @@ using Anhkheg.JSON;
 using Microsoft.Extensions.Configuration;
 
 
-#if WINDOWS
-// We are displaying a lot of data so make sure the console window is wide.
-Console.SetWindowSize(200, 50);
-#else
-Console.WriteLine("This is not Windows so we are stuck with your console window size.");
-#endif
-
 Console.WriteLine("Welcome to Anhkheg!");
 Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
 Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
+Console.WriteLine($"Window Height: {Console.WindowHeight}  Window Width: {Console.WindowWidth}");
+if (OperatingSystem.IsWindows())
+	Console.SetWindowSize(140, 50);
+else
+{
+	Console.WriteLine("Cannot change window size on this operating system.");
+	if (Console.WindowWidth < 140)
+		Console.WriteLine("  WARNING: This program uses wide output. Setting your window width to 140 or more will provide a better experience.");
+}
 
 AnhkhegData carData = new();
 
