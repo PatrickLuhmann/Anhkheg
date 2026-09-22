@@ -2,8 +2,6 @@
 
 using Anhkheg.Domain.Models;
 using Anhkheg.JSON;
-using Microsoft.Extensions.Configuration;
-
 
 Console.WriteLine("Welcome to Anhkheg!");
 Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
@@ -18,49 +16,87 @@ else
 		Console.WriteLine("  WARNING: This program uses wide output. Setting your window width to 140 or more will provide a better experience.");
 }
 
-AnhkhegData carData = new();
+var carData = new AnhkhegData();
 
-var quit = false;
-do
-{
-	Console.WriteLine();
-	Console.Write("$> ");
-	var userInput = Console.ReadLine();
-	switch (userInput)
-	{
-		case "quit":
-			quit = true;
-			break;
-		case "help":
-			CmdHelp();
-			break;
-		case "view":
-			carData.CmdAllVehiclesView();
-			break;
-		case "new":
-			carData.CmdNewVehicle();
-			break;
-		case "select":
-			carData.CmdSelectVehicle();
-			break;
-		case "add":
-			carData.CmdAdd();
-			break;
-	}
-} while (!quit);
+MainMenu();
 
 return;
 
-void CmdHelp()
+void MainMenu()
+{
+	var quit = false;
+	do
+	{
+		Console.WriteLine();
+		Console.WriteLine("Vehicles In The Database");
+		Console.WriteLine("========================");
+		carData.CmdAllVehiclesView();
+
+		Console.WriteLine();
+		Console.WriteLine("Commands: new, select, delete, quit");
+		Console.Write("$> ");
+		var userInput = Console.ReadLine();
+		switch (userInput)
+		{
+			case "new":
+				var vehicle = carData.CmdNewVehicle();
+				if (vehicle is not null)
+					VehicleMenu(vehicle);
+				break;
+			case "select":
+				carData.CmdSelectVehicle();
+				break;
+			case "delete":
+				carData.CmdDeleteVehicle();
+				break;
+			case "quit":
+				quit = true;
+				break;
+			case "help":
+				CmdMainMenuHelp();
+				break;
+		}
+	} while (!quit);
+}
+
+void VehicleMenu(VehicleData vehicle)
+{
+	var back = false;
+	do
+	{
+		Console.WriteLine($"Vehicle: {vehicle.Name}");
+		Console.WriteLine($"Num Fuel Purchases: {vehicle.Purchases.Count}");
+
+
+		Console.WriteLine();
+		Console.WriteLine("Commands: add, edit, delete, back");
+		Console.Write("$> ");
+		var userInput = Console.ReadLine();
+		switch (userInput)
+		{
+			case "add":
+				break;
+			case "edit":
+				break;
+			case "delete":
+				break;
+			case "back":
+				back = true;
+				break;
+		}
+	} while (!back);
+}
+
+void CmdMainMenuHelp()
 {
 	Console.WriteLine("Available Commands");
 	Console.WriteLine("==================");
-	//Console.WriteLine("add - add a fuel purchase");
-	Console.WriteLine("view - view all fuel purchases");
 	Console.WriteLine("new - add a new vehicle to the database");
 	Console.WriteLine("select - select a vehicle to use");
+	Console.WriteLine("delete - delete a vehicle from the database");
 	Console.WriteLine("quit - quit this program");
 }
+
 
 internal class AnhkhegData
 {
@@ -85,20 +121,11 @@ internal class AnhkhegData
 
 	public void CmdAllVehiclesView()
 	{
-#if false
-		int idx = 1;
-		foreach (var vehicle in vehicles)
-		{
-			Console.WriteLine($"[{idx}]  {vehicle.Name}   {vehicle.Purchases.Count} purchases");
-			idx++;
-		}
-#else
 		for (int idx = 0; idx < _vehicles.Count; idx++)
 		{
 			// For human consumption, the index range starts at 1, not 0.
 			Console.WriteLine($"[{idx + 1}]  {_vehicles[idx].Name}   {_vehicles[idx].Purchases.Count} purchases");
 		}
-#endif
 	}
 
 	public void CmdVehiclePurchasesView()
@@ -189,16 +216,57 @@ internal class AnhkhegData
 		}
 	}
 
-	public void CmdNewVehicle()
+	public void CmdDeleteVehicle()
 	{
-		Console.Write("Enter the name of the new vehicle: ");
-		var userInput = Console.ReadLine();
-		if (userInput is null) return;
 		try
 		{
-			var vData = _service.CreateVehicle(userInput);
+			Console.Write("Enter the number of the vehicle to delete: ");
+			var userInput = Console.ReadLine();
+			var number = Convert.ToInt32(userInput);
+			// For human consumption, the index range starts at 1, not 0.
+			if (number < 1 || number > _vehicles.Count)
+			{
+				Console.WriteLine();
+				Console.WriteLine($"ERROR: Number out of range. Valid range is 1 - {_vehicles.Count}.");
+			}
+			else
+			{
+				_currentVehicle = _vehicles[number - 1];
+				Console.WriteLine();
+				Console.WriteLine("You are about to delete thsi vehicle:");
+				Console.WriteLine($"Name: {_currentVehicle.Name}");
+				Console.WriteLine($"Num Fuel Purchases: {_currentVehicle.Purchases.Count}");
+				Console.WriteLine();
+				Console.WriteLine("Delete this vehicle? [y/n]");
+				userInput = Console.ReadLine();
+				if (userInput?.ToLower() == "y")
+				{
+					_service.DeleteVehicle(_currentVehicle.Name);
+					_currentVehicle = null;
+					// NOTE: This will change the index numbers if the deleted vehicle wasn't the last one.
+					_vehicles = _service.GetVehicles();
+				}
+			}
+		}
+		catch
+		{
+			Console.WriteLine("ERROR: Input must be a number.");
+		}
+	}
+
+	public VehicleData? CmdNewVehicle()
+	{
+		Console.WriteLine();
+		Console.Write("Enter the name of the new vehicle: ");
+		var userInput = Console.ReadLine();
+		if (userInput is null) return null;
+		VehicleData? vehicle = null;
+		try
+		{
+			//var vData = _service.CreateVehicle(userInput);
+			vehicle = _service.CreateVehicle(userInput);
 			_vehicles = _service.GetVehicles();
-			_currentVehicle = vData;
+			_currentVehicle = vehicle;
 		}
 		catch (DuplicateVehicleNameException ex)
 		{
@@ -209,5 +277,6 @@ internal class AnhkhegData
 		{
 			Console.WriteLine($"{ex.Message}");
 		}
+		return vehicle;
 	}
 }
