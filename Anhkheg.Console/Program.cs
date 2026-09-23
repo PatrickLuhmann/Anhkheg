@@ -3,100 +3,27 @@
 using Anhkheg.Domain.Models;
 using Anhkheg.JSON;
 
-Console.WriteLine("Welcome to Anhkheg!");
-Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
-Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
-Console.WriteLine($"Window Height: {Console.WindowHeight}  Window Width: {Console.WindowWidth}");
-if (OperatingSystem.IsWindows())
-	Console.SetWindowSize(140, 50);
-else
+internal class Program
 {
-	Console.WriteLine("Cannot change window size on this operating system.");
-	if (Console.WindowWidth < 140)
-		Console.WriteLine("  WARNING: This program uses wide output. Setting your window width to 140 or more will provide a better experience.");
-}
-
-var carData = new AnhkhegData();
-
-MainMenu();
-
-return;
-
-void MainMenu()
-{
-	var quit = false;
-	do
+	private static void Main(string[] args)
 	{
-		Console.WriteLine();
-		Console.WriteLine("Vehicles In The Database");
-		Console.WriteLine("========================");
-		carData.CmdAllVehiclesView();
-
-		Console.WriteLine();
-		Console.WriteLine("Commands: new, select, delete, quit");
-		Console.Write("$> ");
-		var userInput = Console.ReadLine();
-		switch (userInput)
+		Console.WriteLine("Welcome to Anhkheg!");
+		Console.WriteLine($"Current directory: {Environment.CurrentDirectory}");
+		Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
+		Console.WriteLine($"Window Height: {Console.WindowHeight}  Window Width: {Console.WindowWidth}");
+		if (OperatingSystem.IsWindows())
+			Console.SetWindowSize(140, 50);
+		else
 		{
-			case "new":
-				var vehicle = carData.CmdNewVehicle();
-				if (vehicle is not null)
-					VehicleMenu(vehicle);
-				break;
-			case "select":
-				carData.CmdSelectVehicle();
-				break;
-			case "delete":
-				carData.CmdDeleteVehicle();
-				break;
-			case "quit":
-				quit = true;
-				break;
-			case "help":
-				CmdMainMenuHelp();
-				break;
+			Console.WriteLine("Cannot change window size on this operating system.");
+			if (Console.WindowWidth < 140)
+				Console.WriteLine("  WARNING: This program uses wide output. Setting your window width to 140 or more will provide a better experience.");
 		}
-	} while (!quit);
+
+		var app = new AnhkhegData();
+		app.MainMenu();
+	}
 }
-
-void VehicleMenu(VehicleData vehicle)
-{
-	var back = false;
-	do
-	{
-		Console.WriteLine($"Vehicle: {vehicle.Name}");
-		Console.WriteLine($"Num Fuel Purchases: {vehicle.Purchases.Count}");
-
-
-		Console.WriteLine();
-		Console.WriteLine("Commands: add, edit, delete, back");
-		Console.Write("$> ");
-		var userInput = Console.ReadLine();
-		switch (userInput)
-		{
-			case "add":
-				break;
-			case "edit":
-				break;
-			case "delete":
-				break;
-			case "back":
-				back = true;
-				break;
-		}
-	} while (!back);
-}
-
-void CmdMainMenuHelp()
-{
-	Console.WriteLine("Available Commands");
-	Console.WriteLine("==================");
-	Console.WriteLine("new - add a new vehicle to the database");
-	Console.WriteLine("select - select a vehicle to use");
-	Console.WriteLine("delete - delete a vehicle from the database");
-	Console.WriteLine("quit - quit this program");
-}
-
 
 internal class AnhkhegData
 {
@@ -119,7 +46,97 @@ internal class AnhkhegData
 		_vehicles = _service.GetVehicles();
 	}
 
-	public void CmdAllVehiclesView()
+	public void MainMenu()
+	{
+		var quit = false;
+		do
+		{
+			Console.WriteLine();
+			Console.WriteLine("Vehicles In The Database");
+			Console.WriteLine("========================");
+			CmdAllVehiclesView();
+
+			Console.WriteLine();
+			Console.WriteLine("Commands: new, select, delete, quit");
+			Console.Write("$> ");
+			var userInput = Console.ReadLine();
+			switch (userInput)
+			{
+				case "new":
+					var vehicle = CmdNewVehicle();
+					if (vehicle is not null)
+						VehicleMenu(vehicle);
+					break;
+				case "select":
+					CmdSelectVehicle();
+					break;
+				case "delete":
+					CmdDeleteVehicle();
+					break;
+				case "quit":
+					quit = true;
+					break;
+				case "help":
+					MainMenuHelp();
+					break;
+			}
+		} while (!quit);
+	}
+
+	void MainMenuHelp()
+	{
+		Console.WriteLine();
+		Console.WriteLine("Available Commands");
+		Console.WriteLine("==================");
+		Console.WriteLine("new - add a new vehicle to the database");
+		Console.WriteLine("select - select a vehicle to use");
+		Console.WriteLine("delete - delete a vehicle from the database");
+		Console.WriteLine("quit - quit this program");
+	}
+
+	void VehicleMenu(VehicleData vehicle)
+	{
+		var back = false;
+		do
+		{
+			Console.WriteLine();
+			Console.WriteLine($"Vehicle: {vehicle.Name}");
+			Console.WriteLine($"Num Fuel Purchases: {vehicle.Purchases.Count}");
+
+
+			Console.WriteLine();
+			Console.WriteLine("Commands: add, edit, delete, back");
+			Console.Write("$> ");
+			var userInput = Console.ReadLine();
+			switch (userInput)
+			{
+				case "add":
+					break;
+				case "edit":
+					break;
+				case "delete":
+					break;
+				case "back":
+					back = true;
+					break;
+				case "help":
+					VehicleMenuHelp();
+					break;
+			}
+		} while (!back);
+	}
+
+	void VehicleMenuHelp()
+	{
+		Console.WriteLine("Available Commands");
+		Console.WriteLine("==================");
+		Console.WriteLine("add - add a new fuel purchase for this vehicle");
+		Console.WriteLine("edit - edit an existing fuel purchase");
+		Console.WriteLine("delete - delete a fuel purchase from this vehicle");
+		Console.WriteLine("back - return to the main menu");
+	}
+
+	void CmdAllVehiclesView()
 	{
 		for (int idx = 0; idx < _vehicles.Count; idx++)
 		{
@@ -128,7 +145,7 @@ internal class AnhkhegData
 		}
 	}
 
-	public void CmdVehiclePurchasesView()
+	void CmdVehiclePurchasesView()
 	{
 		if (_currentVehicle is null)
 			return;
@@ -150,7 +167,7 @@ internal class AnhkhegData
 		}
 	}
 
-	public void CmdAdd()
+	void CmdAdd()
 	{
 #if false
 		// Get the info from the user.
@@ -192,7 +209,7 @@ internal class AnhkhegData
 #endif
 	}
 
-	public void CmdSelectVehicle()
+	void CmdSelectVehicle()
 	{
 		try
 		{
@@ -216,7 +233,7 @@ internal class AnhkhegData
 		}
 	}
 
-	public void CmdDeleteVehicle()
+	void CmdDeleteVehicle()
 	{
 		try
 		{
@@ -254,7 +271,7 @@ internal class AnhkhegData
 		}
 	}
 
-	public VehicleData? CmdNewVehicle()
+	VehicleData? CmdNewVehicle()
 	{
 		Console.WriteLine();
 		Console.Write("Enter the name of the new vehicle: ");
